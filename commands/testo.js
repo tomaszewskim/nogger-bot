@@ -16,26 +16,29 @@ const Testo = mongoose.model('Testo', testoSchema);
 
 module.exports = {
     name: 'testo',
-    description: 'random testoviron gif',
+    description: 'random testivorion gif',
     execute(message, args) {
         if (args[0] == 'dodaj') {
             const link = args[1];
-            Testo.findOne({url: link}, async function(err, data) {
-                if (data && data.length) {
-                    message.channel.send('Taki gif już istnieje.')
+            Testo.find({url: link}, function(err, data) {
+                if (!data.length) {
+                    if (validUrl.isWebUri(link)) {
+                        const testo = new Testo({
+                            url: link
+                        });
+                        testo.save().then(() => message.channel.send('Gif dodany.'));
+                    } else {
+                        message.channel.send('Nieprawidłowy link.');
+                    }
                 } else {
-                    const testo = new Testo({
-                        url: link
-                    });
-                    testo.save().then(() => message.channel.send('Gif dodany.'))  ;                  
+                    message.channel.send('Taki gif już istnieje.');
                 }
             });
         } else {
             Testo.find({}, function(err, data) {
                 if (err) return console.log(err);
                 message.channel.send(data[Math.floor(Math.random() * (data.length + 1))].url);
-            })
+            });
         }
     }
 }
-
