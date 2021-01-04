@@ -33,7 +33,7 @@ module.exports = {
         } else {
             Testo.find({}, function(err, data) {
                 if (err) return console.log(err);
-                message.channel.send(data[Math.floor(Math.random() * data.length) + 1].url);
+                message.channel.send(data[Math.floor(Math.random() * (data.length + 1))].url);
             })
         }
     }
